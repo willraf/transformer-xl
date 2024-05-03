@@ -607,7 +607,9 @@ class MemTransformerLM(nn.Module):
     def init_mems(self):
         if self.mem_len > 0:
             mems = []
+            print("hello")
             print(self.parameters())
+            print("---------")
             param = next(self.parameters())
             print(param.dtype)
             print(param.device)
