@@ -607,12 +607,7 @@ class MemTransformerLM(nn.Module):
     def init_mems(self):
         if self.mem_len > 0:
             mems = []
-            print("hello")
-            print(self.parameters())
-            print("---------")
             param = next(self.parameters())
-            print(param.dtype)
-            print(param.device)
             for i in range(self.n_layer+1):
                 empty = torch.empty(0, dtype=param.dtype, device=param.device)
                 mems.append(empty)
