@@ -19,11 +19,13 @@ Install miniconda
 
 `conda create --name transformer-xl python==3.7`
 
-`conda activate transormer-xl`
+`conda activate transformer-xl`
 
 `conda install pytorch==0.4.1`
 
 `conda install pytorch==0.4.1 torchvision==0.2.1 cuda90 -c pytorch`
+
+`conda install scipy`
 
 Now running the demo scripts should work:
 
