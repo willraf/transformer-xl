@@ -145,6 +145,7 @@ parser.add_argument('--dynamic-loss-scale', action='store_true',
 #!
 parser.add_argument('--k_rem_indexes', nargs='+', help='k1,k2,k3,k4,k5,k6 REM parameters for RSA module', type=int)
 parser.add_argument('--dilated_factors', nargs='+', help='dilated factors for RSA module', type=int)
+parser.add_argument('--iridis', action='store_true', help='use IRIDIS')
 
 args = parser.parse_args()
 args.tied = not args.not_tied
@@ -186,7 +187,7 @@ device = torch.device('cuda' if args.cuda else 'cpu')
 ###############################################################################
 # Load data
 ###############################################################################
-corpus = get_lm_corpus(args.data, args.dataset)
+corpus = get_lm_corpus(args.data, args.dataset, args.iridis)
 ntokens = len(corpus.vocab)
 args.n_token = ntokens
 
