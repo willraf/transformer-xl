@@ -6,7 +6,7 @@ if [[ $1 == 'train' ]]; then
         --cuda \
         --data ../data/text8/ \
         --dataset text8 \
-        --n_layer 12 \
+        --n_layer 14 \
         --d_model 512 \
         --n_head 8 \
         --d_head 64 \
@@ -16,7 +16,7 @@ if [[ $1 == 'train' ]]; then
         --optim adam \
         --lr 0.00025 \
         --warmup_step 0 \
-        --max_step 400000 \
+        --max_step 40000 \
         --tgt_len 512 \
         --mem_len 512 \
         --eval_tgt_len 128 \
