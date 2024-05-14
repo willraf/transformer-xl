@@ -61,20 +61,6 @@ class LMOrderedIterator(object):
     def __iter__(self):
         return self.get_fixlen_iter()
 
-class TSShuffledIterator(object):
-    def __init__(self, data, bsz, bptt, device='cpu', ext_len=None, shuffle=False):
-        """
-            data -- list[LongTensor] -- there is no order among the LongTensors
-        """
-        self.data = data
-
-        self.bsz = bsz
-        self.bptt = bptt
-        self.ext_len = ext_len if ext_len is not None else 0
-
-        self.device = device
-        self.shuffle = shuffle
-
 
 class LMShuffledIterator(object):
     def __init__(self, data, bsz, bptt, device='cpu', ext_len=None, shuffle=False):
@@ -246,48 +232,6 @@ class Corpus(object):
 
         return data_iter
 
-def TimeSeriesCorpus(Object):
-    def __init__(self, path, dataset, *args, **kwargs):
-        self.dataset = dataset
-
-##########################################################################################
-        #TODO create the datasets train.txt, valid.txt, test.txt
-        # Figure out if/how to encode the dataset. Equivalent to self.train = self.vocab.encode_file(os.path.join(path, 'train.txt'), ordered=True, add_eos=False)
-
-"""
-    def encode_file(self, path, ordered=False, verbose=False, add_eos=True,
-            add_double_eos=False):
-        if verbose: print('encoding file {} ...'.format(path))
-        assert os.path.exists(path)
-        encoded = []
-        with open(path, 'r', encoding='utf-8') as f:
-            for idx, line in enumerate(f):
-                if verbose and idx > 0 and idx % 500000 == 0:
-                    print('    line {}'.format(idx))
-                symbols = self.tokenize(line, add_eos=add_eos,
-                    add_double_eos=add_double_eos)
-                encoded.append(self.convert_to_tensor(symbols))
-
-        if ordered:
-            encoded = torch.cat(encoded)
-
-        return encoded
-"""
-
-        self.train = None
-        self.valid = None 
-        self.test = None
-
-    def get_iterator(self, split, *args, **kwargs):
-        if split == 'train':
-            data_iter = TSShuffledIterator(self.train, *args, **kwargs) 
-
-        elif split in ['valid', 'test']:
-           data = self.valid if split == 'valid' else self.test
-           data_iter = TSShuffledIterator(data, *args, **kwargs) # TSOrderedIterator / TSShuffledIterator(data, *args, **kwargs)
-
-        return data_iter
-
 
 def get_lm_corpus(datadir, dataset):
     fn = os.path.join(datadir, 'cache.pt')
@@ -314,15 +258,6 @@ def get_lm_corpus(datadir, dataset):
         torch.save(corpus, fn)
 
     return corpus
-
-def get_ts_corpus(datadir, dataset):
-    fn = os.path.join(datadir, 'cache.pt')
-    if os.path.exists(fn):
-        print('Loading cached dataset...')
-        corpus = torch.load(fn)
-    else:
-        print('Producing dataset {}...'.format(dataset))
-
 
 if __name__ == '__main__':
     import argparse
