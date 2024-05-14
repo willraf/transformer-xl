@@ -116,7 +116,7 @@ parser.add_argument('--same_length', action='store_true',
                     help='use the same attn length for all tokens')
 parser.add_argument('--attn_type', type=int, default=0,
                     help='attention type. 0 for ours, 1 for Shaw et al,'
-                    '2 for Vaswani et al, 3 for Al Rfou et al.')
+                    '2 for Vaswani et al, 3 for Al Rfou et al., 4 for RSA')
 parser.add_argument('--clamp_len', type=int, default=-1,
                     help='use the same pos embeddings after clamp_len')
 parser.add_argument('--eta_min', type=float, default=0.0,
@@ -141,6 +141,11 @@ parser.add_argument('--static-loss-scale', type=float, default=1,
 parser.add_argument('--dynamic-loss-scale', action='store_true',
                     help='Use dynamic loss scaling.  If supplied, this argument'
                     ' supersedes --static-loss-scale.')
+
+#!
+parser.add_argument('--k_rem_indexes', nargs='+', help='k1,k2,k3,k4,k5,k6 REM parameters for RSA module', type=int)
+parser.add_argument('--dilated_factors', nargs='+', help='dilated factors for RSA module', type=int)
+
 args = parser.parse_args()
 args.tied = not args.not_tied
 
@@ -279,7 +284,8 @@ else:
         tie_projs=tie_projs, pre_lnorm=args.pre_lnorm, tgt_len=args.tgt_len,
         ext_len=args.ext_len, mem_len=args.mem_len, cutoffs=cutoffs,
         same_length=args.same_length, attn_type=args.attn_type,
-        clamp_len=args.clamp_len, sample_softmax=args.sample_softmax)
+        clamp_len=args.clamp_len, sample_softmax=args.sample_softmax, 
+        k_rem_indexes=args.k_rem_indexes, dilated_factors=args.dilated_factors)
     model.apply(weights_init)
     model.word_emb.apply(weights_init) # ensure embedding init is not overridden by out_layer in case of weight sharing
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
