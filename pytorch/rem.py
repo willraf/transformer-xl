@@ -20,7 +20,7 @@ class REM(nn.Module):
         self.truncation = truncation
 
         self.device = device
-        self.d = torch.tensor(d, dtype=torch.float32, device=self.device)
+        self.d = d
         self.n_head = n_head
     
     # # ORIGINAL
@@ -72,20 +72,6 @@ class REM(nn.Module):
         for i in range(dil_n):
             L_distiled[(i+undil_n)] = self.compute_Ld(L[(i+undil_n)], self.d[i])
 
-        # L_non_dil = L[:k3, :, :]
-        # L_dil = L[k3:, :, :]
-        # result_L_dil = torch.empty_like(L_dil)
-
-        # # k4 5 and 6 are diluted
-        # undil_n = k1+k2+k3
-        # dil_n = k4 + k5 + k6
-        # for i in range(1, dil_n): 
-        #   # L[i] = self.compute_Ld(L[i].clone(), self.d[i])
-        #   result_L_dil[i] = self.compute_Ld(L_dil[i], self.d[i])
-
-
-        # L_new = torch.cat([L_non_dil, result_L_dil])
-
         # Rems 2 3 5 and 6 are cyclic
         s2,s3,s5,s6 = self.get_sinusoid(L_distiled,theta)
 
@@ -113,18 +99,6 @@ class REM(nn.Module):
         REM = torch.cat([P1, P2, P3, P4, P5, P6])
         print(REM.shape)
 
-        # s = self.get_sinusoid(L, theta)
-        # powered_lambda = pow(lambda_,L1)
-        # powered_gamma = pow(gamma,L2)
-        # REM = torch.cat([powered_lambda, (powered_gamma * s)])
-
-
-
-        # #s1,s2,s3,s4 = get_sinusoid(L,theta)
-        # s = self.get_sinusoid(L, theta)
-        # powered_gamma = pow(gamma,L)
-        # REM = powered_gamma * s   
-
         return REM.permute(1, 2, 0)      # query_len x key_len x n_heads
 
     def create_Toeplitz_3D(self, d, truncation, query_len, key_len):
@@ -135,24 +109,6 @@ class REM(nn.Module):
         T[T > 200] = 0
         L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
         return L.to(dtype=torch.float32, device=self.device)
-
-    # def create_Toeplitz_3D(self, d, truncation, query_len, key_len):
-    #     x = np.arange(0, key_len)
-    #     y = np.arange(0, query_len)
-
-    #     T = torch.tensor(toeplitz(y, x))
-    #     T[T > 200] = 0
-    #     L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
-
-    #     d = torch.tensor(d).view(self.n_head, 1, 1)
-    #     # d = d.to(dtype=torch.float32, device=self.device)
-    #     # L = L.to(dtype=torch.float32, device=self.device)
-
-    #     result_tensor = torch.empty_like(L)
-    #     # Apply the function to each L matrix with the corresponding d value
-    #     for i in range(self.n_head):
-    #         result_tensor[i] = self.compute_Ld(T[i], d[i])
-    #     return result_tensor.to(dtype=torch.float32, device=self.device)
 
 
     def compute_Ld(self, L, d):
