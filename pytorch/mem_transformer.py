@@ -571,6 +571,8 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
         attn_prob = torch.cat((rsa_attn_prob, reg_attn_prob), dim=2)
         attn_prob = self.dropatt(attn_prob)
 
+        print('attn prob: ', attn_prob.shape)
+
         #### compute attention vector
         attn_vec = torch.einsum('ijbn,jbnd->ibnd', (attn_prob, w_head_v))
 
@@ -589,6 +591,7 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
             ##### residual connection + layer normalization
             output = self.layer_norm(w + attn_out)
 
+        print('Output: ', output.shape)
         return output
 
 class RelLearnableMultiHeadAttn(RelMultiHeadAttn):
