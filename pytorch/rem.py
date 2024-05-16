@@ -86,11 +86,7 @@ class REM(nn.Module):
         # Rems 2 3 5 and 6 are cyclic
         s2,s3,s5,s6 = self.get_sinusoid(L, theta)
 
-        # s2 = s[:k2]
-        # s3 = s[k2:(k2+k3)]
-        # s5 = s[(k2+k3):(k2+k3+k5)]
-        # s6 = s[(k2+k3+k5):]
-
+        # Divide the L matix into the different rem types
         L1 = L[:k1]
         L2 = L[k1:(k1+k2)]
         L3 = L[(k1+k2):(k1+k2+k3)]
@@ -109,7 +105,6 @@ class REM(nn.Module):
         P6 = torch.pow(gamma,L6) * s6
 
         REM = torch.cat([L1, L2, L3, L4, L5, L6])
-        print(REM.shape)
 
         return REM.permute(1, 2, 0)      # query_len x key_len x n_heads
 
@@ -121,15 +116,13 @@ class REM(nn.Module):
         T[T > 200] = 0
         L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
 
+        # Distil the final n rems (k4, k5, k6)
         n_distil = len(d)
         n_reg = self.n_head - n_distil
         d = torch.tensor(d).view(n_distil, 1, 1)
-        # d = d.to(dtype=torch.float32, device=self.device)
-        # L = L.to(dtype=torch.float32, device=self.device)
 
         result_tensor = torch.empty_like(L)
         # Apply the function to the distilled REMs
-
         for i in range(n_distil):
             result_tensor[n_reg + i] = self.compute_Ld(L[n_reg + i], d[i])
         return result_tensor.to(dtype=torch.float32, device=self.device)
