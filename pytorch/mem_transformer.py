@@ -548,7 +548,7 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
         rsa_attn_score, reg_attn_score = torch.split(attn_score, self.n_rsa_head, dim=-1)
 
         rems = self.rems(eta=self.eta, nu=self.nu, theta=self.theta, query_len=qlen, key_len=klen)
-        print('REMS'):
+        print('REMS')
         print(rems)
 
         # Repeat the rem for the number of batches. I think this is ok as the rem does not depend on the data in the batch
