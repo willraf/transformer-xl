@@ -20,7 +20,7 @@ class REM(nn.Module):
         self.truncation = truncation
 
         self.device = device
-        self.d = torch.tensor(d, dtype=torch.float32)
+        self.d = torch.tensor(d, dtype=torch.float32, device=self.device)
         self.n_head = n_head
     
     # # ORIGINAL
@@ -118,7 +118,7 @@ class REM(nn.Module):
         T = torch.tensor(toeplitz(y, x), dtype=torch.float32)
         T[T > 200] = 0
         L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
-        return L
+        return L.to(dtype=torch.float32, device=self.device)
 
     # def create_Toeplitz_3D(self, d, truncation, query_len, key_len):
     #     x = np.arange(0, key_len)
