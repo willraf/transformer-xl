@@ -65,12 +65,13 @@ class REM(nn.Module):
         k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
 
         L_distiled = torch.empty_like(L)
+        print('L_disl ', L_distiled.shape)
         undil_n = k1+k2+k3
         dil_n = k4+k5+k6
         for i in range(undil_n):
             L_distiled = L[i]
         for i in range(dil_n):
-            L_distiled = self.compute_Ld(L[(i+undil_n)], self.d[i])
+            L_distiled[(i+undil_n)] = self.compute_Ld(L[(i+undil_n)], self.d[i])
 
         # L_non_dil = L[:k3, :, :]
         # L_dil = L[k3:, :, :]
