@@ -67,7 +67,7 @@ class REM(nn.Module):
         L_distiled = torch.empty_like(L)
         undil_n = k1+k2+k3
         dil_n = k4+k5+k6
-        for i in range(undil_n)
+        for i in range(undil_n):
             L_distiled = L[i]
         for i in range(dil_n):
             L_distiled = self.compute_Ld(L[(i+undil_n)], d[i])
@@ -116,9 +116,9 @@ class REM(nn.Module):
 
 
         # #s1,s2,s3,s4 = get_sinusoid(L,theta)
-        s = self.get_sinusoid(L, theta)
-        powered_gamma = pow(gamma,L)
-        REM = powered_gamma * s   
+        # s = self.get_sinusoid(L, theta)
+        # powered_gamma = pow(gamma,L)
+        # REM = powered_gamma * s   
 
         return REM.permute(1, 2, 0)      # query_len x key_len x n_heads
 
