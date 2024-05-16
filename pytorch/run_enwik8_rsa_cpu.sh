@@ -23,6 +23,7 @@ if [[ $1 == 'train' ]]; then
         --k_rem_indexes 0 0 0 0 2 2 \
         --dilated_factors 3 6 9 12 \
         --attn_type 4 \
+        --iridis
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'

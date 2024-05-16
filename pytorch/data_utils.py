@@ -235,7 +235,6 @@ class Corpus(object):
 
 def get_lm_corpus(datadir, dataset, iridis=False):
     fn = os.path.join(datadir, 'cache.pt')
-    print(iridis)
     if os.path.exists(fn) and not iridis:
         print('Loading cached dataset...')
         corpus = torch.load(fn)
