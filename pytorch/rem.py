@@ -65,14 +65,14 @@ class REM(nn.Module):
         L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
 
         d = torch.tensor(d).view(self.n_head, 1, 1)
-        d = d.to(dtype=torch.float32, device=self.device)
-        L = L.to(dtype=torch.float32, device=self.device)
+        # d = d.to(dtype=torch.float32, device=self.device)
+        # L = L.to(dtype=torch.float32, device=self.device)
 
         result_tensor = torch.empty_like(L)
         # Apply the function to each L matrix with the corresponding d value
         for i in range(self.n_head):
             result_tensor[i] = self.compute_Ld(T[i], d[i])
-        return result_tensor
+        return result_tensor.to(dtype=torch.float32, device=self.device)
 
 
     def compute_Ld(self, L, d):
