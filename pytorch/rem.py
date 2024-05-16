@@ -20,7 +20,7 @@ class REM(nn.Module):
         self.truncation = truncation
 
         self.device = device
-        self.d = d
+        self.d = d.to(dtype=torch.float32, device=self.device)
         self.n_head = n_head
     
     # # ORIGINAL
@@ -35,17 +35,6 @@ class REM(nn.Module):
     #     s = torch.cat([s1,s2,s3,s4])
     #     return s
 
-    # WILLS
-    def get_sinusoid(self, L, theta):
-
-        k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
-        M = L * theta
-        s2 = torch.cos(M[k1:(k1+k2), ]).to(dtype=torch.float32, device=self.device)
-        s3 = torch.sin(M[k2:(k2+k3), ]).to(dtype=torch.float32, device=self.device).to(dtype=torch.float32, device=self.device)
-        s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ]).to(dtype=torch.float32, device=self.device)
-        s6 = torch.sin(M[(k2+k3+k4+k5):, ]).to(dtype=torch.float32, device=self.device)
-        return s2,s3,s5,s6
-
     # # RORYS
     # def get_sinusoid(self, L, theta):
     #     k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
@@ -57,6 +46,19 @@ class REM(nn.Module):
     #     s = torch.cat([s1,s2,s3,s4])
     #     return s.to(dtype=torch.float32, device=self.device)
 
+
+    # WILLS
+    def get_sinusoid(self, L, theta):
+
+        k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
+        M = L * theta
+        s2 = torch.cos(M[k1:(k1+k2), ]).to(dtype=torch.float32, device=self.device)
+        s3 = torch.sin(M[k2:(k2+k3), ]).to(dtype=torch.float32, device=self.device).to(dtype=torch.float32, device=self.device)
+        s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ]).to(dtype=torch.float32, device=self.device)
+        s6 = torch.sin(M[(k2+k3+k4+k5):, ]).to(dtype=torch.float32, device=self.device)
+        return s2,s3,s5,s6
+
+
     def forward(self, eta, nu, theta, query_len, key_len):
         lambda_ = torch.tanh(eta)
         gamma = torch.sigmoid(nu)
@@ -64,7 +66,7 @@ class REM(nn.Module):
         
         k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
 
-        L_distiled = torch.empty_like(L)
+        L_distiled = torch.empty_like(L).to(dtype=torch.float32, device=self.device)
         print('L_disl ', L_distiled.shape)
         undil_n = k1+k2+k3
         dil_n = k4+k5+k6
@@ -113,8 +115,6 @@ class REM(nn.Module):
 
     def compute_Ld(self, L, d):
         # Compute the indicator matrix: 1 where L is divisible by d, else 0
-        # L = L.to(dtype=torch.float32, device=self.device)
-        # d = d.to(dtype=torch.float32, device=self.device)
         indicator_matrix = (L % d == 0).int() 
         indicator_matrix = indicator_matrix.to(dtype=torch.float32, device=self.device)
         # 
