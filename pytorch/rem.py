@@ -147,4 +147,4 @@ class REM(nn.Module):
         A[A > 200] = 0
         L = torch.from_numpy(A).to(self.device)
         L = torch.stack([L]*4, 0).to(self.device)
-        return L
+        return L.to(dtype=torch.float32, device=self.device)
