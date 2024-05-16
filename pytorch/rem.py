@@ -37,7 +37,7 @@ class REM(nn.Module):
     def forward(self, eta, nu, theta, query_len, key_len):
         lambda_ = torch.tanh(eta)
         gamma = torch.sigmoid(nu)
-        L = self.create_Toeplitz_3D(self.d, self.truncation, query_len=None, key_len=None) # L is of shape (n_heads x query_len x key_len)
+        L = self.create_Toeplitz_3D(self.d, self.truncation, query_len, key_len) # L is of shape (n_heads x query_len x key_len)
         print('L shape: ', L.shape)
         # s1,s2,s3,s4 = get_sinusoid(L,theta)
         s = self.get_sinusoid(L, theta)
