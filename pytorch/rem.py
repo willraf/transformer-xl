@@ -141,7 +141,7 @@ class REM(nn.Module):
 
     def compute_Ld(self, L, d):
         # Compute the indicator matrix: 1 where L is divisible by d, else 0
-        indicator_matrix = (L % d == 0).int() 
+        indicator_matrix = (L % d == 0)
         # indicator_matrix = indicator_matrix.to(dtype=torch.float32, device=self.device)
         # L = L.to(dtype=torch.float32, device=self.device)
         
