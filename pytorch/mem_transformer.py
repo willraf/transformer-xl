@@ -1195,6 +1195,8 @@ class MemTransformerLM(nn.Module):
             loss = self.crit(pred_hid.view(-1, pred_hid.size(-1)), target.view(-1))
             loss = loss.view(tgt_len, -1)
 
+        print(loss)
+
         if new_mems is None:
             return [loss]
         else:

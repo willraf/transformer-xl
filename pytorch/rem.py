@@ -67,17 +67,3 @@ class REM(nn.Module):
         d = d.to(dtype=torch.float32, device=self.device)
         L = L.to(dtype=torch.float32, device=self.device)
         return L/d
-
-        # # Initialize the Toeplitz matrix
-        # L = np.zeros((n_heads, query_len, key_len, truncation))
-
-        # # Construct the Toeplitz matrix
-        # for k in range(truncation):
-        #     # Construct a 2D Toeplitz matrix
-        #     T = toeplitz(range(d - k, 2 * d - k), r=np.arange(d, 0, -1))
-        #     # Expand the 2D Toeplitz matrix to the required shape and assign it to the k-th slice of L
-        #     L[:, :, :, k] = np.tile(T, (n_heads, query_len // n_heads, key_len // n_heads, 1))
-
-        # return L
-
-
