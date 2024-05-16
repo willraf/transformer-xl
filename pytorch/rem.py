@@ -79,10 +79,12 @@ class REM(nn.Module):
         # Compute the indicator matrix: 1 where L is divisible by d, else 0
         indicator_matrix = (L % d == 0).int() 
         indicator_matrix = indicator_matrix.to(dtype=torch.float32, device=self.device)
+        d = d.to(dtype=torch.float32, device=self.device)
+        L = L.to(dtype=torch.float32, device=self.device)
+
         
         # Compute the result matrix L_d by element-wise division where the indicator is 1
         L_d = (L / d) * indicator_matrix
-        print(L_d.dtype)
         return L_d
 
 
