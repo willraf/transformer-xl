@@ -59,8 +59,8 @@ class REM(nn.Module):
     #     return L.to(self.device)
 
     def create_Toeplitz_3D(self, d, truncation, query_len, key_len):
-        x = np.arange(0, (key_len - 1))
-        y = np.arange(0, (query_len - 1))
+        x = np.arange(0, key_len)
+        y = np.arange(0, query_len)
 
         T = torch.tensor(toeplitz(y, x))
         L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
