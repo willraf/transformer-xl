@@ -70,7 +70,7 @@ class REM(nn.Module):
         for i in range(undil_n):
             L_distiled = L[i]
         for i in range(dil_n):
-            L_distiled = self.compute_Ld(L[(i+undil_n)], d[i])
+            L_distiled = self.compute_Ld(L[(i+undil_n)], self.d[i])
 
         # L_non_dil = L[:k3, :, :]
         # L_dil = L[k3:, :, :]
