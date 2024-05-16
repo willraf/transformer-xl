@@ -20,7 +20,7 @@ class REM(nn.Module):
         self.truncation = truncation
 
         self.device = device
-        self.d = d.to(dtype=torch.float32, device=self.device)
+        self.d = d
         self.n_head = n_head
     
     # # ORIGINAL
