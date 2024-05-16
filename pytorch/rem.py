@@ -82,23 +82,15 @@ class REM(nn.Module):
         
         k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
 
-        L_distiled = torch.empty_like(L, dtype=torch.float32, device=self.device)
-        print('L_disl ', L_distiled.dtype)
-        undil_n = k1+k2+k3
-        dil_n = k4+k5+k6
-        L_distiled[:undil_n] = L[:undil_n]
-        for i in range(dil_n):
-            L_distiled[(i+undil_n)] = self.compute_Ld(L[(i+undil_n)], self.d[i])
-
         # Rems 2 3 5 and 6 are cyclic
         s2,s3,s5,s6 = self.get_sinusoid(L_distiled,theta)
 
-        L1 = L_distiled[:k1]
-        L2 = L_distiled[k1:(k1+k2)]
-        L3 = L_distiled[(k1+k2):(k1+k2+k3)]
-        L4 = L_distiled[(k1+k2+k3):(k1+k2+k3+k4)]
-        L5 = L_distiled[(k1+k2+k3+k4):(k1+k2+k3+k4+k5)]
-        L6 = L_distiled[(k1+k2+k3+k4+k5):]
+        L1 = L[:k1]
+        L2 = L[k1:(k1+k2)]
+        L3 = L[(k1+k2):(k1+k2+k3)]
+        L4 = L[(k1+k2+k3):(k1+k2+k3+k4)]
+        L5 = L[(k1+k2+k3+k4):(k1+k2+k3+k4+k5)]
+        L6 = L[(k1+k2+k3+k4+k5):]
 
         # Regular (non cyclic) REMs
         P1 = pow(lambda_,L1)
@@ -123,10 +115,22 @@ class REM(nn.Module):
         x = np.arange(0, key_len)
         y = np.arange(0, query_len)
 
-        T = torch.tensor(toeplitz(y, x), dtype=torch.float32)
+        T = torch.tensor(toeplitz(y, x))
         T[T > 200] = 0
         L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
-        return L.to(dtype=torch.float32, device=self.device)
+
+        n_distil = len(d)
+        n_reg = self.n_head - n_distil
+        d = torch.tensor(d).view(num_distil, 1, 1)
+        # d = d.to(dtype=torch.float32, device=self.device)
+        # L = L.to(dtype=torch.float32, device=self.device)
+
+        result_tensor = torch.empty_like(L)
+        # Apply the function to the distilled REMs
+
+        for i in range(num_distil):
+            result_tensor[n_reg + i] = self.compute_Ld(T[n_reg + i], d[i])
+        return result_tensor.to(dtype=torch.float32, device=self.device)
 
 
     def compute_Ld(self, L, d):
