@@ -35,73 +35,73 @@ class REM(nn.Module):
     #     s = torch.cat([s1,s2,s3,s4])
     #     return s
 
-    # WILLS
-    def get_sinusoid(self, L, theta):
-
-        k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
-        M = L * theta
-        s2 = torch.cos(M[k1:(k1+k2), ])
-        s3 = torch.sin(M[k2:(k2+k3), ])
-        s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ])
-        s6 = torch.sin(M[(k2+k3+k4+k5):, ])
-        return s2,s3,s5,s6
-
-    # # RORYS
+    # # WILLS
     # def get_sinusoid(self, L, theta):
+
     #     k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
     #     M = L * theta
-    #     s1 = torch.cos(M[:k2, ])
-    #     s2 = torch.sin(M[k2:(k2+k3), ])
-    #     s3 = torch.cos(M[(k2+k3):(k2+k3+k5), ]) #!
-    #     s4 = torch.sin(M[(k2+k3+k5):(k2+k3+k5+k6), ]) #!
-    #     s = torch.cat([s1,s2,s3,s4])
-    #     return s.to(dtype=torch.float32, device=self.device)
+    #     s2 = torch.cos(M[k1:(k1+k2), ])
+    #     s3 = torch.sin(M[k2:(k2+k3), ])
+    #     s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ])
+    #     s6 = torch.sin(M[(k2+k3+k4+k5):, ])
+    #     return s2,s3,s5,s6
+
+    # RORYS
+    def get_sinusoid(self, L, theta):
+        k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
+        M = L * theta
+        s1 = torch.cos(M[:k2, ])
+        s2 = torch.sin(M[k2:(k2+k3), ])
+        s3 = torch.cos(M[(k2+k3):(k2+k3+k5), ]) #!
+        s4 = torch.sin(M[(k2+k3+k5):(k2+k3+k5+k6), ]) #!
+        s = torch.cat([s1,s2,s3,s4])
+        return s.to(dtype=torch.float32, device=self.device)
 
     def forward(self, eta, nu, theta, query_len, key_len):
         lambda_ = torch.tanh(eta)
         gamma = torch.sigmoid(nu)
         L = self.create_Toeplitz_3D(self.d, self.truncation, query_len, key_len) # L is of shape (n_heads x query_len x key_len)
         
-        k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
-        L_non_dil = L[:k3, :, :]
-        L_dil = L[k3:, :, :]
-        result_L_dil = torch.empty_like(L_dil)
+        # k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
+        # L_non_dil = L[:k3, :, :]
+        # L_dil = L[k3:, :, :]
+        # result_L_dil = torch.empty_like(L_dil)
 
-        # k4 5 and 6 are diluted
-        undil_n = k1+k2+k3
-        dil_n = k4 + k5 + k6
-        for i in range(undil_n, dil_n): 
-          # L[i] = self.compute_Ld(L[i].clone(), self.d[i])
-          result_L_dil[i] = self.compute_Ld(L_dil[i], self.d[i])
+        # # k4 5 and 6 are diluted
+        # undil_n = k1+k2+k3
+        # dil_n = k4 + k5 + k6
+        # for i in range(undil_n, dil_n): 
+        #   # L[i] = self.compute_Ld(L[i].clone(), self.d[i])
+        #   result_L_dil[i] = self.compute_Ld(L_dil[i], self.d[i])
 
-        L_new = torch.cat([L_non_dil, result_L_dil])
+        # L_new = torch.cat([L_non_dil, result_L_dil])
 
-        # Rems 2 3 5 and 6 are cyclic
-        s2,s3,s5,s6 = self.get_sinusoid(L,theta)
+        # # Rems 2 3 5 and 6 are cyclic
+        # s2,s3,s5,s6 = self.get_sinusoid(L,theta)
 
-        L1 = L_new[:k1]
-        L2 = L_new[k1:(k1+k2)]
-        L3 = L_new[(k1+k2):(k1+k2+k3)]
-        L4 = L_new[(k1+k2+k3):(k1+k2+k3+k4)]
-        L5 = L_new[(k1+k2+k3+k4):(k1+k2+k3+k4+k5)]
-        L6 = L_new[(k1+k2+k3+k4+k5):]
+        # L1 = L_new[:k1]
+        # L2 = L_new[k1:(k1+k2)]
+        # L3 = L_new[(k1+k2):(k1+k2+k3)]
+        # L4 = L_new[(k1+k2+k3):(k1+k2+k3+k4)]
+        # L5 = L_new[(k1+k2+k3+k4):(k1+k2+k3+k4+k5)]
+        # L6 = L_new[(k1+k2+k3+k4+k5):]
 
-        # Regular (non cyclic) REMs
-        L1 = pow(lambda_,L1)
-        L4 = pow(lambda_,L4)
+        # # Regular (non cyclic) REMs
+        # L1 = pow(lambda_,L1)
+        # L4 = pow(lambda_,L4)
 
-        # Cyclic REMs
-        L2 = pow(gamma,L2) * s2
-        L3 = pow(gamma,L3) * s3
-        L5 = pow(gamma,L5) * s5
-        L6 = pow(gamma,L6) * s6
+        # # Cyclic REMs
+        # L2 = pow(gamma,L2) * s2
+        # L3 = pow(gamma,L3) * s3
+        # L5 = pow(gamma,L5) * s5
+        # L6 = pow(gamma,L6) * s6
 
-        REM = torch.cat([L1, L2, L3, L4, L5, L6])
+        # REM = torch.cat([L1, L2, L3, L4, L5, L6])
 
-        # s = self.get_sinusoid(L, theta)
-        # powered_lambda = pow(lambda_,L1)
-        # powered_gamma = pow(gamma,L2)
-        # REM = torch.cat([powered_lambda, (powered_gamma * s)])
+        s = self.get_sinusoid(L, theta)
+        powered_lambda = pow(lambda_,L1)
+        powered_gamma = pow(gamma,L2)
+        REM = torch.cat([powered_lambda, (powered_gamma * s)])
 
 
 
