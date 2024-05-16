@@ -84,7 +84,7 @@ class REM(nn.Module):
         k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
 
         # Rems 2 3 5 and 6 are cyclic
-        s2,s3,s5,s6 = self.get_sinusoid(L_distiled,theta)
+        s2,s3,s5,s6 = self.get_sinusoid(L, theta)
 
         # s2 = s[:k2]
         # s3 = s[k2:(k2+k3)]
@@ -108,7 +108,6 @@ class REM(nn.Module):
         P5 = pow(gamma,L5) * s5
         P6 = pow(gamma,L6) * s6
         print('L', L.dtype)
-        print('L distilled', L_distiled.dtype)
         print('L5 ', P5.dtype)
         print('L6 ', P6.dtype)
 
