@@ -56,8 +56,8 @@ class REM(nn.Module):
         s3 = torch.sin(M[k2:(k2+k3), ]).to(dtype=torch.float32, device=self.device).to(dtype=torch.float32, device=self.device)
         s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ]).to(dtype=torch.float32, device=self.device)
         s6 = torch.sin(M[(k2+k3+k4+k5):, ]).to(dtype=torch.float32, device=self.device)
-        # s = torch.cat([s2,s3,s5,s6])
-        return s2,s3,s5,s6
+        s = torch.cat([s2,s3,s5,s6])
+        return s
 
     def forward(self, eta, nu, theta, query_len, key_len):
         lambda_ = torch.tanh(eta)
@@ -84,12 +84,12 @@ class REM(nn.Module):
         k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
 
         # Rems 2 3 5 and 6 are cyclic
-        s2,s3,s5,s6 = self.get_sinusoid(L, theta)
+        s = self.get_sinusoid(L, theta)
 
-        # s2 = s[:k2]
-        # s3 = s[k2:(k2+k3)]
-        # s5 = s[(k2+k3):(k2+k3+k5)]
-        # s6 = s[(k2+k3+k5):]
+        s2 = s[:k2]
+        s3 = s[k2:(k2+k3)]
+        s5 = s[(k2+k3):(k2+k3+k5)]
+        s6 = s[(k2+k3+k5):]
 
         L1 = L[:k1]
         L2 = L[k1:(k1+k2)]
