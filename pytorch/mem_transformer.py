@@ -544,34 +544,25 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
                     attn_mask[:,:,:,None], -float('inf')).type_as(attn_score)
 
         #!
-        print('Attention score shape', attn_score.shape)
-        print('RSA heads: ', self.n_rsa_head)
-        print('batch size', bsz)
-
-
-
         # Split the scores ibetween the number of regular heads and rsa heads
         rsa_attn_score, reg_attn_score = torch.split(attn_score, self.n_rsa_head, dim=-1)
 
-        print(f'query len {qlen}, key len {klen}')
         rems = self.rems(eta=self.eta, nu=self.nu, theta=self.theta, query_len=qlen, key_len=klen)
 
         # Repeat the rem for the number of batches. I think this is ok as the rem does not depend on the data in the batch
         rems = rems.unsqueeze(2)
         rems = rems.repeat(1, 1, bsz, 1)
 
-        print("!!!!!!", F.softmax(rsa_attn_score, dim=1).shape)
-        print('£££££££££', rems.shape)
+        # Get attention probs of rsa heads
         rsa_attn_prob = (1-F.sigmoid(self.mu)) * F.softmax(rsa_attn_score, dim=1) + F.sigmoid(self.mu) * rems
 
         # [qlen x klen x bsz x n_head]
+        # Get attention probs of regular heads
         reg_attn_prob = F.softmax(reg_attn_score, dim=1)
 
         # Concatenate the regualar and RSA heads back together
         attn_prob = torch.cat((rsa_attn_prob, reg_attn_prob), dim=3)
         attn_prob = self.dropatt(attn_prob)
-
-        print('attn prob: ', attn_prob.shape)
 
         #### compute attention vector
         attn_vec = torch.einsum('ijbn,jbnd->ibnd', (attn_prob, w_head_v))
@@ -591,7 +582,6 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
             ##### residual connection + layer normalization
             output = self.layer_norm(w + attn_out)
 
-        print('Output: ', output.shape)
         return output
 
 class RelLearnableMultiHeadAttn(RelMultiHeadAttn):
