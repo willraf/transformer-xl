@@ -123,7 +123,7 @@ class REM(nn.Module):
 
         T = torch.tensor(toeplitz(y, x))
         T[T > 200] = 0
-        L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
+        L = T.unsqueeze(0).repeat(self.n_head, 1, 1).to(dtype=torch.float32, device=self.device)
 
         n_distil = len(d)
         n_reg = self.n_head - n_distil
@@ -135,7 +135,7 @@ class REM(nn.Module):
         # Apply the function to the distilled REMs
 
         for i in range(n_distil):
-            result_tensor[n_reg + i] = self.compute_Ld(T[n_reg + i], d[i])
+            result_tensor[n_reg + i] = self.compute_Ld(L[n_reg + i], d[i])
         return result_tensor.to(dtype=torch.float32, device=self.device)
 
 
