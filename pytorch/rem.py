@@ -99,14 +99,14 @@ class REM(nn.Module):
         L6 = L[(k1+k2+k3+k4+k5):]
 
         # # Regular (non cyclic) REMs
-        # P1 = pow(lambda_,L1)
-        # P4 = pow(lambda_,L4)
+        P1 = torch.pow(lambda_,L1)
+        P4 = torch.pow(lambda_,L4)
 
         # # Cyclic REMs
-        # P2 = pow(gamma,L2) * s2
-        # P3 = pow(gamma,L3) * s3
-        # P5 = pow(gamma,L5) * s5
-        # P6 = pow(gamma,L6) * s6
+        P2 = torch.pow(gamma,L2) * s2
+        P3 = torch.pow(gamma,L3) * s3
+        P5 = torch.pow(gamma,L5) * s5
+        P6 = torch.pow(gamma,L6) * s6
 
         REM = torch.cat([L1, L2, L3, L4, L5, L6])
         print(REM.shape)
