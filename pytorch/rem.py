@@ -68,8 +68,7 @@ class REM(nn.Module):
         print('L_disl ', L_distiled.shape)
         undil_n = k1+k2+k3
         dil_n = k4+k5+k6
-        for i in range(undil_n):
-            L_distiled = L[i]
+        L_distiled[:undil_n] = L[:undil_n]
         for i in range(dil_n):
             L_distiled[(i+undil_n)] = self.compute_Ld(L[(i+undil_n)], self.d[i])
 
