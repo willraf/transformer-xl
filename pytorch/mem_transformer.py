@@ -544,10 +544,13 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
                     attn_mask[:,:,:,None], -float('inf')).type_as(attn_score)
 
         #!
-        # Split the scores ibetween the number of regular heads and rsa heads
-        rsa_attn_score, reg_attn_score = torch.split(attn_score, self.n_rsa_head, dim=2)
-
         print('Attention score shape', attn_score.shape)
+        print('RSA heads: ', self.n_rsa_head)
+        print('batch size', bsz)
+
+        # Split the scores ibetween the number of regular heads and rsa heads
+        rsa_attn_score, reg_attn_score = torch.split(attn_score, self.n_rsa_head, dim=-1)
+
         print(f'query len {qlen}, key len {klen}')
         rems = self.rems(eta=self.eta, nu=self.nu, theta=self.theta, query_len=qlen, key_len=klen)
 
