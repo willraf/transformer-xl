@@ -23,18 +23,19 @@ class REM(nn.Module):
         self.device = device
         self.n_head = n_head
         
-    def get_sinusoid(self, L, theta):
+    # def get_sinusoid(self, L, theta):
 
+    #     k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
+    #     M = L * theta
+    #     s1 = torch.cos(M[:k2, ])
+    #     s2 = torch.sin(M[k2:(k2+k3), ])
+    #     s3 = torch.cos(M[(k2+k3):(k2+k3+k4), ])
+    #     s4 = torch.sin(M[(k2+k3+k4):, ])
+    #     s = torch.cat([s1,s2,s3,s4])
+    #     return s
+
+    def get_sinusoid(self, L, theta):
         k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
-        M = L * theta
-        s1 = torch.cos(M[:k2, ])
-        s2 = torch.sin(M[k2:(k2+k3), ])
-        s3 = torch.cos(M[(k2+k3):(k2+k3+k4), ])
-        s4 = torch.sin(M[(k2+k3+k4):, ])
-        s = torch.cat([s1,s2,s3,s4])
-        return s
-
-    def get_sinusoid(self, L, theta):
         M = L * theta
         s1 = torch.cos(M[:k2, ])
         s2 = torch.sin(M[k2:(k2+k3), ])
