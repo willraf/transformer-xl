@@ -106,7 +106,7 @@ class REM(nn.Module):
         L5 = pow(gamma,L5) * s5
         L6 = pow(gamma,L6) * s6
         print('L', L.shape)
-        print('L distilled': L_distiled.shape)
+        print('L distilled', L_distiled.shape)
         print('L5 ', L5.shape)
         print('L6 ', L6.shape)
 
