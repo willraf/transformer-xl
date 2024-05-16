@@ -315,7 +315,7 @@ class RelMultiHeadAttn(nn.Module):
 class RSARelMultiHeadAttn(nn.Module):
     def __init__(self, n_head, d_model, d_head, dropout, dropatt=0,
                  tgt_len=None, ext_len=None, mem_len=None, pre_lnorm=False, 
-                 k_rem_indexes=[], dilated_factors=[], device=None, n_rsa_head=4):
+                 k_rem_indexes=[], dilated_factors=[], device=None, n_rsa_head=None, mu_init=1):
         super(RSARelMultiHeadAttn, self).__init__()
 
         self.n_head = n_head
@@ -343,7 +343,7 @@ class RSARelMultiHeadAttn(nn.Module):
         self.k_rem_indexes = k_rem_indexes
         self.dilated_factors = dilated_factors
         # Initialise RSA learnable parameters
-        self.mu = nn.Parameter(torch.tensor([np.random.uniform(-3, 3)]), requires_grad=True)
+        self.mu = nn.Parameter(torch.tensor([mu_init]), requires_grad=True)
 
         # For (λ, γ, θ) which determine the recurrent patterns, we initialize λ’s at different heads to spread out between ...
         self.theta = nn.Parameter(torch.tensor([np.pi/4], requires_grad=True))
@@ -902,7 +902,7 @@ class MemTransformerLM(nn.Module):
                  cutoffs=[], adapt_inp=False,
                  same_length=False, attn_type=0, clamp_len=-1, 
                  sample_softmax=-1, 
-                 k_rem_indexes=[], dilated_factors=[], device=None, n_rsa_head=None):
+                 k_rem_indexes=[], dilated_factors=[], device=None, n_rsa_head=None, mu_init=1):
         super(MemTransformerLM, self).__init__()
         self.n_token = n_token
 
@@ -963,7 +963,7 @@ class MemTransformerLM(nn.Module):
                         tgt_len=tgt_len, ext_len=ext_len, mem_len=mem_len,
                         dropatt=dropatt, pre_lnorm=pre_lnorm, 
                         k_rem_indexes=k_rem_indexes, dilated_factors=dilated_factors, 
-                        device=device, n_rsa_head=n_rsa_head)
+                        device=device, n_rsa_head=n_rsa_head, mu_init)
                 )
 
         self.sample_softmax = sample_softmax

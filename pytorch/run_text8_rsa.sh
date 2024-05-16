@@ -24,8 +24,10 @@ if [[ $1 == 'train' ]]; then
         --multi_gpu \
         --gpu0_bsz 4 \
         --k_rem_indexes 0 0 0 0 2 2 \
-        --dilated_factors 3 6 9 12 \
+        --dilated_factors 6 6 12 12 \
         --attn_type 4 \
+        --n_rsa_head 4 \
+        --mu_init 1\
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
