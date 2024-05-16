@@ -48,13 +48,19 @@ class REM(nn.Module):
         lambda_ = torch.tanh(eta)
         gamma = torch.sigmoid(nu)
         L = self.create_Toeplitz_3D(self.d, self.truncation, query_len, key_len) # L is of shape (n_heads x query_len x key_len)
-        L1 = L[:2, :, :]
-        L2 = L[2:, :, :]
+        # L1 = L[:2, :, :]
+        # L2 = L[2:, :, :]
+        # # s1,s2,s3,s4 = get_sinusoid(L,theta)
+        # s = self.get_sinusoid(L2, theta)
+        # powered_lambda = pow(lambda_,L1)
+        # powered_gamma = pow(gamma,L2)
+        # REM = torch.cat([powered_lambda, (powered_gamma * s)])
+
         # s1,s2,s3,s4 = get_sinusoid(L,theta)
-        s = self.get_sinusoid(L2, theta)
-        powered_lambda = pow(lambda_,L1)
-        powered_gamma = pow(gamma,L2)
-        REM = torch.cat([powered_lambda, (powered_gamma * s)])
+        s = self.get_sinusoid(L, theta)
+        powered_gamma = pow(gamma,L)
+        REM = powered_gamma * s   
+
         return REM.permute(1, 2, 0)      # query_len x key_len x n_heads
 
     def create_Toeplitz_3D(self, d, truncation, query_len, key_len):
