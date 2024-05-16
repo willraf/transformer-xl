@@ -56,7 +56,7 @@ class REM(nn.Module):
         s3 = torch.sin(M[k2:(k2+k3), ]).to(dtype=torch.float32, device=self.device).to(dtype=torch.float32, device=self.device)
         s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ]).to(dtype=torch.float32, device=self.device)
         s6 = torch.sin(M[(k2+k3+k4+k5):, ]).to(dtype=torch.float32, device=self.device)
-        # s = torch.cat([])
+        # s = torch.cat([s2,s3,s5,s6])
         return s2,s3,s5,s6
 
     def forward(self, eta, nu, theta, query_len, key_len):
@@ -85,6 +85,11 @@ class REM(nn.Module):
 
         # Rems 2 3 5 and 6 are cyclic
         s2,s3,s5,s6 = self.get_sinusoid(L_distiled,theta)
+
+        # s2 = s[:k2]
+        # s3 = s[k2:(k2+k3)]
+        # s5 = s[(k2+k3):(k2+k3+k5)]
+        # s6 = s[(k2+k3+k5):]
 
         L1 = L[:k1]
         L2 = L[k1:(k1+k2)]
@@ -129,7 +134,7 @@ class REM(nn.Module):
         result_tensor = torch.empty_like(L)
         # Apply the function to the distilled REMs
 
-        for i in range(num_distil):
+        for i in range(n_distil):
             result_tensor[n_reg + i] = self.compute_Ld(T[n_reg + i], d[i])
         return result_tensor.to(dtype=torch.float32, device=self.device)
 
