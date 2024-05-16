@@ -17,10 +17,10 @@ class REM(nn.Module):
         self.k5 = k5
         self.k6 = k6
         
-        self.d = d
         self.truncation = truncation
 
         self.device = device
+        self.d = torch.tensor(d, dtype=float32)
         self.n_head = n_head
     
     # # ORIGINAL
@@ -115,7 +115,7 @@ class REM(nn.Module):
         x = np.arange(0, key_len)
         y = np.arange(0, query_len)
 
-        T = torch.tensor(toeplitz(y, x))
+        T = torch.tensor(toeplitz(y, x), dtype=torch.float32)
         T[T > 200] = 0
         L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
         return L
