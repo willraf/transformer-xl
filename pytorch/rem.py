@@ -100,7 +100,7 @@ class REM(nn.Module):
         s2 = torch.sin(M[self.k2:(self.k2+self.k3), ]).to(self.device) 
         s3 = torch.cos(M[(self.k2+self.k3):(self.k2+self.k3+self.k5), ]) #!
         s4 = torch.sin(M[(self.k2+self.k3+self.k5):(self.k2+self.k3+self.k5+self.k6), ]) #!
-        s = torch.concat([s1,s2,s3,s4]).to(self.device)
+        s = torch.cat([s1,s2,s3,s4]).to(self.device)
         return s
         
     def forward(self, eta, nu, theta, query_len, key_len):
@@ -125,17 +125,17 @@ class REM(nn.Module):
         for i in range(n_dilated_regs):
             dilated_reg_rem = torch.kron(powered_lambda[self.k1 + i], torch.eye(n=self.d.pop()).to(self.device)).to(self.device)
             dilated_reg_rem = dilated_reg_rem[:L.shape[1], :L.shape[2]]
-            regular_rems = torch.concat([regular_rems, torch.unsqueeze(dilated_reg_rem, 0).to(self.device)]).to(self.device)
+            regular_rems = torch.cat([regular_rems, torch.unsqueeze(dilated_reg_rem, 0).to(self.device)]).to(self.device)
 
         # dilate cyclic rems: (k5, k6)
         n_dilated_cyclics = self.k5 + self.k6
         for j in range(n_dilated_cyclics):
             dilated_cyclic_rem = torch.kron(s[self.k2+self.k3+j], torch.eye(n=self.d.pop()).to(self.device)).to(self.device)
             dilated_cyclic_rem = dilated_cyclic_rem[:L.shape[1], :L.shape[2]]        
-            cyclic_rems = torch.concat([cyclic_rems, torch.unsqueeze(dilated_cyclic_rem, 0).to(self.device)]).to(self.device)
+            cyclic_rems = torch.cat([cyclic_rems, torch.unsqueeze(dilated_cyclic_rem, 0).to(self.device)]).to(self.device)
         
         # mask & -I
-        REM = torch.concat([regular_rems, (cyclic_rems * s)]).to(self.device)
+        REM = torch.cat([regular_rems, (cyclic_rems * s)]).to(self.device)
         REM = torch.tril(REM).to(self.device) - torch.eye(n=REM.shape[1], m=REM.shape[2]).to(self.device)
         return REM
 
