@@ -143,7 +143,7 @@ class REM(nn.Module):
         x = np.arange(0, key_len)
         y = np.arange(0, query_len)
 
-        A = torch.tensor(toeplitz(y, x))
+        A = toeplitz(y, x)
         A[A > 200] = 0
         L = torch.from_numpy(A).to(self.device)
         L = torch.stack([L]*4, 0).to(self.device)
