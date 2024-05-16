@@ -144,7 +144,7 @@ class MultiHeadAttn(nn.Module):
 
 class RSAMultiHeadAttn(nn.Module):
     def __init__(self, n_head, d_model, d_head, dropout, dropatt=0, pre_lnorm=False,
-                k_rem_indexes=[], dilated_factors=[], n_rsa_heads=4):
+                k_rem_indexes=[], dilated_factors=[], n_rsa_head=4):
         super(RSAMultiHeadAttn, self).__init__()
 
         self.n_head = n_head
@@ -167,8 +167,8 @@ class RSAMultiHeadAttn(nn.Module):
 
         #!
         # Add RSA hyperparameters
-        self.n_rsa_heads = n_rsa_heads
-        self.n_reg_heads = n_head - n_rsa_heads
+        self.n_rsa_head = n_rsa_head
+        self.n_reg_heads = n_head - n_rsa_head
 
         self.k_rem_indexes = k_rem_indexes
         self.dilated_factors = dilated_factors
@@ -315,7 +315,7 @@ class RelMultiHeadAttn(nn.Module):
 class RSARelMultiHeadAttn(nn.Module):
     def __init__(self, n_head, d_model, d_head, dropout, dropatt=0,
                  tgt_len=None, ext_len=None, mem_len=None, pre_lnorm=False, 
-                 k_rem_indexes=[], dilated_factors=[], device=None):
+                 k_rem_indexes=[], dilated_factors=[], device=None, n_rsa_head=4):
         super(RSARelMultiHeadAttn, self).__init__()
 
         self.n_head = n_head
@@ -336,6 +336,8 @@ class RSARelMultiHeadAttn(nn.Module):
         self.pre_lnorm = pre_lnorm
 
         #!
+        self.n_rsa_head = n_rsa_head
+        self.n_reg_head = n_head - n_rsa_head
         self.device = device
         # Add RSA hyperparameters
         self.k_rem_indexes = k_rem_indexes
@@ -353,7 +355,7 @@ class RSARelMultiHeadAttn(nn.Module):
 
         k1, k2, k3, k4, k5, k6 = self.k_rem_indexes
         d = self.dilated_factors.copy() if self.dilated_factors else []
-        self.rems = REM(k1=k1, k2=k2, k3=k3, k4=k4, k5=k5, k6=k6, d=d, truncation=5, device=device)
+        self.rems = REM(k1=k1, k2=k2, k3=k3, k4=k4, k5=k5, k6=k6, d=d, truncation=5, device=device, n_head=n_rsa_head)
 
 
     def _parallelogram_mask(self, h, w, left=False):
@@ -542,6 +544,9 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
                     attn_mask[:,:,:,None], -float('inf')).type_as(attn_score)
 
         #!
+        # Split the scores ibetween the number of regular heads and rsa heads
+        rsa_attn_score, reg_attn_score = torch.split(tensor, self.n_rsa_head, dim=2)
+
         print('Attention score shape', attn_score.shape)
         print(f'query len {qlen}, key len {klen}')
         rems = self.rems(eta=self.eta, nu=self.nu, theta=self.theta, query_len=qlen, key_len=klen)
@@ -550,10 +555,13 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
         rems = rems.unsqueeze(2)
         rems = rems.repeat(1, 1, bsz, 1)
 
-        attn_prob = (1-F.sigmoid(self.mu)) * F.softmax(attn_score, dim=1) + F.sigmoid(self.mu) * rems
+        rsa_attn_prob = (1-F.sigmoid(self.mu)) * F.softmax(rsa_attn_score, dim=1) + F.sigmoid(self.mu) * rems
 
         # [qlen x klen x bsz x n_head]
-        # attn_prob = F.softmax(attn_score, dim=1)
+        reg_attn_prob = F.softmax(reg_attn_score, dim=1)
+
+        # Concatenate the regualar and RSA heads back together
+        attn_prob = torch.cat((rsa_attn_prob, reg_attn_prob), dim=2)
         attn_prob = self.dropatt(attn_prob)
 
         #### compute attention vector
@@ -894,7 +902,7 @@ class MemTransformerLM(nn.Module):
                  cutoffs=[], adapt_inp=False,
                  same_length=False, attn_type=0, clamp_len=-1, 
                  sample_softmax=-1, 
-                 k_rem_indexes=[], dilated_factors=[], device=None):
+                 k_rem_indexes=[], dilated_factors=[], device=None, n_rsa_head=None):
         super(MemTransformerLM, self).__init__()
         self.n_token = n_token
 
@@ -954,7 +962,8 @@ class MemTransformerLM(nn.Module):
                         n_head, d_model, d_head, d_inner, dropout,
                         tgt_len=tgt_len, ext_len=ext_len, mem_len=mem_len,
                         dropatt=dropatt, pre_lnorm=pre_lnorm, 
-                        k_rem_indexes=k_rem_indexes, dilated_factors=dilated_factors, device=device)
+                        k_rem_indexes=k_rem_indexes, dilated_factors=dilated_factors, 
+                        device=device, n_rsa_head=n_rsa_head)
                 )
 
         self.sample_softmax = sample_softmax

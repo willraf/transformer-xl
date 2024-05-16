@@ -143,6 +143,8 @@ parser.add_argument('--dynamic-loss-scale', action='store_true',
                     ' supersedes --static-loss-scale.')
 
 #!
+parser.add_argument('--n_rsa_head', type=int, default=4,
+                    help='number of RSA heads')
 parser.add_argument('--k_rem_indexes', nargs='+', help='k1,k2,k3,k4,k5,k6 REM parameters for RSA module', type=int)
 parser.add_argument('--dilated_factors', nargs='+', help='dilated factors for RSA module', type=int)
 parser.add_argument('--iridis', action='store_true', help='use IRIDIS')
@@ -286,7 +288,7 @@ else:
         ext_len=args.ext_len, mem_len=args.mem_len, cutoffs=cutoffs,
         same_length=args.same_length, attn_type=args.attn_type,
         clamp_len=args.clamp_len, sample_softmax=args.sample_softmax, 
-        k_rem_indexes=args.k_rem_indexes, dilated_factors=args.dilated_factors, device=device)
+        k_rem_indexes=args.k_rem_indexes, dilated_factors=args.dilated_factors, device=device, n_rsa_head=args.n_rsa_head)
     model.apply(weights_init)
     model.word_emb.apply(weights_init) # ensure embedding init is not overridden by out_layer in case of weight sharing
 args.n_all_param = sum([p.nelement() for p in model.parameters()])

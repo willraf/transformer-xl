@@ -6,7 +6,7 @@ import torch.nn as nn
 
 class REM(nn.Module):
     # initialise the object
-    def __init__(self, k1, k2, k3, k4, k5, k6, d, truncation, device=None):
+    def __init__(self, k1, k2, k3, k4, k5, k6, d, truncation, device=None, n_heads=4):
         super(REM, self).__init__()
         
         self.k1 = k1 #(reg)
@@ -21,6 +21,7 @@ class REM(nn.Module):
         self.truncation = truncation
 
         self.device = device
+        self.n_head = n_head
         
     def get_sinusoid(self, L, theta):
 
@@ -47,26 +48,37 @@ class REM(nn.Module):
         print('transpoase REM shape', REM.transpose(0, 2).shape)
         return REM.transpose(0, 2)      # query_len x key_len x n_heads
 
-    def create_Toeplitz_3D(self, d, truncation, query_len):
-        T = np.arange(query_len) 
-        A = toeplitz(c=T)
-        A[A > 200] = 0
-        L = torch.from_numpy(A).float()
-        # L = L[:][:truncation] #! truncate?
-        L = torch.stack([L]*4, 0)
+    # def create_Toeplitz_3D(self, d, truncation, query_len):
+    #     T = np.arange(query_len) 
+    #     A = toeplitz(c=T)
+    #     A[A > 200] = 0
+    #     L = torch.from_numpy(A).float()
+    #     # L = L[:][:truncation] #! truncate?
+    #     L = torch.stack([L]*4, 0)
+    #     return L.to(self.device)
+
+    def create_Toeplitz_3D(self, d, truncation, query_len, key_len):
+        x = np.arange(0, (key_len - 1))
+        y = np.arange(0, (query_len - 1))
+
+        T = toeplitz(y, x)
+        matrices = [T * self.n_heads]
+        L = torch.stack(matrices, dim=0)
+
+        d = d.view(n_heads, 1, 1)
+        L = L/d
         return L.to(self.device)
 
-    # def create_Toeplitz_3D(self, d, truncation, n_heads, query_len, key_len):
-    #     # Initialize the Toeplitz matrix
-    #     L = np.zeros((n_heads, query_len, key_len, truncation))
+        # # Initialize the Toeplitz matrix
+        # L = np.zeros((n_heads, query_len, key_len, truncation))
 
-    #     # Construct the Toeplitz matrix
-    #     for k in range(truncation):
-    #         # Construct a 2D Toeplitz matrix
-    #         T = toeplitz(range(d - k, 2 * d - k), r=np.arange(d, 0, -1))
-    #         # Expand the 2D Toeplitz matrix to the required shape and assign it to the k-th slice of L
-    #         L[:, :, :, k] = np.tile(T, (n_heads, query_len // n_heads, key_len // n_heads, 1))
+        # # Construct the Toeplitz matrix
+        # for k in range(truncation):
+        #     # Construct a 2D Toeplitz matrix
+        #     T = toeplitz(range(d - k, 2 * d - k), r=np.arange(d, 0, -1))
+        #     # Expand the 2D Toeplitz matrix to the required shape and assign it to the k-th slice of L
+        #     L[:, :, :, k] = np.tile(T, (n_heads, query_len // n_heads, key_len // n_heads, 1))
 
-    #     return L
+        # return L
 
 
