@@ -65,6 +65,8 @@ class REM(nn.Module):
         L = T.unsqueeze(0).repeat(d, 1, 1)
 
         d = torch.tensor(d).view(self.n_head, 1, 1)
+        print("d", d.shape)
+        print('l', L.shape)
         L = L/d
         return L.to(self.device)
 
