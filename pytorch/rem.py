@@ -76,7 +76,7 @@ class REM(nn.Module):
         L = L.to(dtype=torch.float32, device=self.device)
 
         # Rems 2 3 5 and 6 are cyclic
-        s2,s3,s5,s6 = get_sinusoid(L,theta)
+        s2,s3,s5,s6 = self.get_sinusoid(L,theta)
 
         L1 = L[:k1]
         L2 = L[k1:(k1+k2)]
