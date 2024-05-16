@@ -68,9 +68,11 @@ class REM(nn.Module):
         d = torch.tensor(d).view(self.n_head, 1, 1)
         print("d", d.shape)
         print('l', L.shape)
-        L = L/d
-        print('Device: ', self.device)
-        return L.to(self.device)
+        print('L', L)
+        print('d', d)
+        d = d.to(dtype=torch.float32, device=self.device)
+        L = L.to(dtype=torch.float32, device=self.device)
+        return L/d
 
         # # Initialize the Toeplitz matrix
         # L = np.zeros((n_heads, query_len, key_len, truncation))
