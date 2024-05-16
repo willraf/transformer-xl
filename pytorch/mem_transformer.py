@@ -545,7 +545,7 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
 
         #!
         # Split the scores ibetween the number of regular heads and rsa heads
-        rsa_attn_score, reg_attn_score = torch.split(tensor, self.n_rsa_head, dim=2)
+        rsa_attn_score, reg_attn_score = torch.split(attn_score, self.n_rsa_head, dim=2)
 
         print('Attention score shape', attn_score.shape)
         print(f'query len {qlen}, key len {klen}')
