@@ -20,7 +20,7 @@ class REM(nn.Module):
         self.d = d
         self.truncation = truncation
 
-        self.decive = device
+        self.device = device
         
     def get_sinusoid(self, L, theta):
 

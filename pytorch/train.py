@@ -286,7 +286,7 @@ else:
         ext_len=args.ext_len, mem_len=args.mem_len, cutoffs=cutoffs,
         same_length=args.same_length, attn_type=args.attn_type,
         clamp_len=args.clamp_len, sample_softmax=args.sample_softmax, 
-        k_rem_indexes=args.k_rem_indexes, dilated_factors=args.dilated_factors)
+        k_rem_indexes=args.k_rem_indexes, dilated_factors=args.dilated_factors, device=device)
     model.apply(weights_init)
     model.word_emb.apply(weights_init) # ensure embedding init is not overridden by out_layer in case of weight sharing
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
