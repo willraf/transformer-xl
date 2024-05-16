@@ -64,7 +64,7 @@ class REM(nn.Module):
         T = torch.tensor(toeplitz(y, x))
         L = T.unsqueeze(0).repeat(d, 1, 1)
 
-        d = torch.tensor(d).view(n_heads, 1, 1)
+        d = torch.tensor(d).view(self.n_head, 1, 1)
         L = L/d
         return L.to(self.device)
 
