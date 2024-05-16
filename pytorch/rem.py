@@ -39,6 +39,7 @@ class REM(nn.Module):
         gamma = torch.sigmoid(nu)
         L = self.create_Toeplitz_3D(self.d, self.truncation, query_len, key_len) # L is of shape (n_heads x query_len x key_len)
         print('L shape: ', L.shape)
+        print('L dtype: ', L.dtype)
         # s1,s2,s3,s4 = get_sinusoid(L,theta)
         s = self.get_sinusoid(L, theta)
         powered_lambda = pow(lambda_,L)
@@ -68,6 +69,7 @@ class REM(nn.Module):
         print("d", d.shape)
         print('l', L.shape)
         L = L/d
+        print('Device: ', self.device)
         return L.to(self.device)
 
         # # Initialize the Toeplitz matrix
