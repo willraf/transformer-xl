@@ -29,6 +29,8 @@ Install miniconda
 
 Now running the demo scripts should work:
 
+`git clone https://github.com/willraf/transformer-xl.git`
+
 `cd transformer-xl`
 
 `bash getdata.sh` **FIXED
@@ -38,6 +40,10 @@ Now running the demo scripts should work:
 `bash run_enwik8_base.sh train --work_dir ~/xl-exp1`
 
 In order to reprodce the results given by the paper, we need to make some changes.
+
+## Text8
+
+`bash run_text8_rsa.sh train --work_dir ~/xl-exp1
 
 ## Wiki8
 
