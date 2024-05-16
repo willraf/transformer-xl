@@ -548,6 +548,8 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
         rsa_attn_score, reg_attn_score = torch.split(attn_score, self.n_rsa_head, dim=-1)
 
         rems = self.rems(eta=self.eta, nu=self.nu, theta=self.theta, query_len=qlen, key_len=klen)
+        print('REMS'):
+        print(rems)
 
         # Repeat the rem for the number of batches. I think this is ok as the rem does not depend on the data in the batch
         rems = rems.unsqueeze(2)
@@ -555,6 +557,8 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
 
         # Get attention probs of rsa heads
         rsa_attn_prob = (1-F.sigmoid(self.mu)) * F.softmax(rsa_attn_score, dim=1) + F.sigmoid(self.mu) * rems
+        print('RSA attn prob')
+        print(rsa_attn_prob)
 
         # [qlen x klen x bsz x n_head]
         # Get attention probs of regular heads
@@ -1196,8 +1200,6 @@ class MemTransformerLM(nn.Module):
         else:
             loss = self.crit(pred_hid.view(-1, pred_hid.size(-1)), target.view(-1))
             loss = loss.view(tgt_len, -1)
-
-        print(loss)
 
         if new_mems is None:
             return [loss]
