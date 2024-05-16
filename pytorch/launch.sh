@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH -p ecsstudents,ecsall
+#SBATCH -p ecsstudents
 #SBATCH --mem=32G
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
