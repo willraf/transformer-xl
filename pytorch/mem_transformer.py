@@ -963,7 +963,7 @@ class MemTransformerLM(nn.Module):
                         tgt_len=tgt_len, ext_len=ext_len, mem_len=mem_len,
                         dropatt=dropatt, pre_lnorm=pre_lnorm, 
                         k_rem_indexes=k_rem_indexes, dilated_factors=dilated_factors, 
-                        device=device, n_rsa_head=n_rsa_head, mu_init)
+                        device=device, n_rsa_head=n_rsa_head, mu_init=mu_init)
                 )
 
         self.sample_softmax = sample_softmax
