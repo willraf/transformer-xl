@@ -123,7 +123,7 @@ class REM(nn.Module):
 
         T = torch.tensor(toeplitz(y, x))
         T[T > 200] = 0
-        L = T.unsqueeze(0).repeat(self.n_head, 1, 1).to(dtype=torch.float32, device=self.device)
+        L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
 
         n_distil = len(d)
         n_reg = self.n_head - n_distil
@@ -144,6 +144,7 @@ class REM(nn.Module):
         indicator_matrix = (L % d == 0).int() 
         indicator_matrix = indicator_matrix.to(dtype=torch.float32, device=self.device)
         d = torch.tensor(d, dtype=torch.float32, device=self.device)
+        L = L.to(dtype=torch.float32, device=self.device)
         print(L.dtype, d.dtype, indicator_matrix.dtype)
         # Compute the result matrix L_d by element-wise division where the indicator is 1
         L_d = (L / d) * indicator_matrix
