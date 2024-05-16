@@ -56,6 +56,7 @@ class REM(nn.Module):
         s3 = torch.sin(M[k2:(k2+k3), ]).to(dtype=torch.float32, device=self.device).to(dtype=torch.float32, device=self.device)
         s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ]).to(dtype=torch.float32, device=self.device)
         s6 = torch.sin(M[(k2+k3+k4+k5):, ]).to(dtype=torch.float32, device=self.device)
+        # s = torch.cat([])
         return s2,s3,s5,s6
 
     def forward(self, eta, nu, theta, query_len, key_len):
@@ -121,7 +122,7 @@ class REM(nn.Module):
 
         n_distil = len(d)
         n_reg = self.n_head - n_distil
-        d = torch.tensor(d).view(num_distil, 1, 1)
+        d = torch.tensor(d).view(n_distil, 1, 1)
         # d = d.to(dtype=torch.float32, device=self.device)
         # L = L.to(dtype=torch.float32, device=self.device)
 
