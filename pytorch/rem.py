@@ -17,7 +17,7 @@ class REM(nn.Module):
         self.k5 = k5
         self.k6 = k6
         
-        self.d = torch.tensor(d, dtype=torch.float32)
+        self.d = torch.tensor(d, dtype=torch.float32, device=self.device)
         self.truncation = truncation
 
         self.device = device
