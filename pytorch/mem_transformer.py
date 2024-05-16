@@ -568,7 +568,7 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
         reg_attn_prob = F.softmax(reg_attn_score, dim=1)
 
         # Concatenate the regualar and RSA heads back together
-        attn_prob = torch.cat((rsa_attn_prob, reg_attn_prob), dim=2)
+        attn_prob = torch.cat((rsa_attn_prob, reg_attn_prob), dim=3)
         attn_prob = self.dropatt(attn_prob)
 
         print('attn prob: ', attn_prob.shape)
