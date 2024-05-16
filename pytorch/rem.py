@@ -98,20 +98,20 @@ class REM(nn.Module):
         L6 = L_distiled[(k1+k2+k3+k4+k5):]
 
         # Regular (non cyclic) REMs
-        L1 = pow(lambda_,L1)
-        L4 = pow(lambda_,L4)
+        P1 = pow(lambda_,L1)
+        P4 = pow(lambda_,L4)
 
         # Cyclic REMs
-        L2 = pow(gamma,L2) * s2
-        L3 = pow(gamma,L3) * s3
-        L5 = pow(gamma,L5) * s5
-        L6 = pow(gamma,L6) * s6
+        P2 = pow(gamma,L2) * s2
+        P3 = pow(gamma,L3) * s3
+        P5 = pow(gamma,L5) * s5
+        P6 = pow(gamma,L6) * s6
         print('L', L.shape)
         print('L distilled', L_distiled.shape)
-        print('L5 ', L5.shape)
-        print('L6 ', L6.shape)
+        print('L5 ', P5.shape)
+        print('L6 ', P6.shape)
 
-        REM = torch.cat([L1, L2, L3, L4, L5, L6])
+        REM = torch.cat([P1, P2, P3, P4, P5, P6])
         print(REM.shape)
 
         # s = self.get_sinusoid(L, theta)
