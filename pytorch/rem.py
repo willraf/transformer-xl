@@ -40,10 +40,12 @@ class REM(nn.Module):
         L = self.create_Toeplitz_3D(self.d, self.truncation, query_len, key_len) # L is of shape (n_heads x query_len x key_len)
         print('L shape: ', L.shape)
         print('L dtype: ', L.dtype)
+        L1 = L[:2, :, :]
+        L2 = L[2:, :, :]
         # s1,s2,s3,s4 = get_sinusoid(L,theta)
         s = self.get_sinusoid(L, theta)
-        powered_lambda = pow(lambda_,L)
-        powered_gamma = pow(gamma,L)
+        powered_lambda = pow(lambda_,L1)
+        powered_gamma = pow(gamma,L2)
         REM = torch.cat([powered_lambda, (powered_gamma * s)])
         print('REM shape: ', REM.shape)
         print('transpoase REM shape', REM.transpose(0, 2).shape)
@@ -63,10 +65,9 @@ class REM(nn.Module):
         y = np.arange(0, query_len)
 
         T = torch.tensor(toeplitz(y, x))
-        n = int(self.n_head/2)
-        L = T.unsqueeze(0).repeat(n, 1, 1)
+        L = T.unsqueeze(0).repeat(self.n_head, 1, 1)
 
-        d = torch.tensor(d).view(n, 1, 1)
+        d = torch.tensor(d).view(self.n_head, 1, 1)
         print("d", d.shape)
         print('l', L.shape)
         print('L', L)
