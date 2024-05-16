@@ -62,7 +62,7 @@ class REM(nn.Module):
         y = np.arange(0, (query_len - 1))
 
         T = toeplitz(y, x)
-        matrices = [T * self.n_head]
+        matrices = [T]  * self.n_head
         L = torch.stack(matrices, dim=0)
 
         d = d.view(n_heads, 1, 1)
