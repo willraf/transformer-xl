@@ -548,6 +548,8 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
         print('RSA heads: ', self.n_rsa_head)
         print('batch size', bsz)
 
+
+
         # Split the scores ibetween the number of regular heads and rsa heads
         rsa_attn_score, reg_attn_score = torch.split(attn_score, self.n_rsa_head, dim=-1)
 
@@ -558,6 +560,8 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
         rems = rems.unsqueeze(2)
         rems = rems.repeat(1, 1, bsz, 1)
 
+        print("!!!!!!", F.softmax(rsa_attn_score, dim=1).shape)
+        print('£££££££££', rems.shape)
         rsa_attn_prob = (1-F.sigmoid(self.mu)) * F.softmax(rsa_attn_score, dim=1) + F.sigmoid(self.mu) * rems
 
         # [qlen x klen x bsz x n_head]
