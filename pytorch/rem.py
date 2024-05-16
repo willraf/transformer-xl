@@ -145,6 +145,7 @@ class REM(nn.Module):
         d = torch.tensor(d, dtype=torch.float32, device=self.device)
         L = L.to(dtype=torch.float32, device=self.device)
         print(L.dtype, d.dtype, indicator_matrix.dtype)
+        print(self.device)
         # Compute the result matrix L_d by element-wise division where the indicator is 1
         L_d = (L / d) * indicator_matrix
         return L_d
