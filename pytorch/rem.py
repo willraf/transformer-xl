@@ -62,7 +62,7 @@ class REM(nn.Module):
         y = np.arange(0, (query_len - 1))
 
         T = torch.tensor(toeplitz(y, x))
-        L = T.unsqueeze(0).repeat(d, 1, 1)
+        L = T.unsqueeze(0).repeat(slef.n_head, 1, 1)
 
         d = torch.tensor(d).view(self.n_head, 1, 1)
         print("d", d.shape)
