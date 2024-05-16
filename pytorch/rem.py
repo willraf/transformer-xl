@@ -6,7 +6,7 @@ import torch.nn as nn
 
 class REM(nn.Module):
     # initialise the object
-    def __init__(self, k1, k2, k3, k4, k5, k6, d, truncation, device=None, n_heads=4):
+    def __init__(self, k1, k2, k3, k4, k5, k6, d, truncation, device=None, n_head=4):
         super(REM, self).__init__()
         
         self.k1 = k1 #(reg)
