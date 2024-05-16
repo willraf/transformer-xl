@@ -343,7 +343,7 @@ class RSARelMultiHeadAttn(nn.Module):
         self.k_rem_indexes = k_rem_indexes
         self.dilated_factors = dilated_factors
         # Initialise RSA learnable parameters
-        self.mu = nn.Parameter(torch.tensor([mu_init]), requires_grad=True)
+        self.mu = nn.Parameter(torch.tensor([mu_init], dtype=torch.float32), requires_grad=True)
 
         # For (λ, γ, θ) which determine the recurrent patterns, we initialize λ’s at different heads to spread out between ...
         self.theta = nn.Parameter(torch.tensor([np.pi/4], requires_grad=True))
