@@ -6,7 +6,7 @@ import torch.nn as nn
 
 class REM(nn.Module):
     # initialise the object
-    def __init__(self, k1, k2, k3, k4, k5, k6, d, truncation):
+    def __init__(self, k1, k2, k3, k4, k5, k6, d, truncation, device=None):
         super(REM, self).__init__()
         
         self.k1 = k1 #(reg)
@@ -19,6 +19,8 @@ class REM(nn.Module):
         
         self.d = d
         self.truncation = truncation
+
+        self.decive = device
         
     def get_sinusoid(self, L, theta):
 
@@ -49,7 +51,7 @@ class REM(nn.Module):
         L = torch.from_numpy(A).float()
         # L = L[:][:truncation] #! truncate?
         L = torch.stack([L]*4, 0)
-        return L
+        return L.to(self.device)
 
     # def create_Toeplitz_3D(self, d, truncation, n_heads, query_len, key_len):
     #     # Initialize the Toeplitz matrix

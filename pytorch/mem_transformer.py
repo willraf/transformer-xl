@@ -315,7 +315,7 @@ class RelMultiHeadAttn(nn.Module):
 class RSARelMultiHeadAttn(nn.Module):
     def __init__(self, n_head, d_model, d_head, dropout, dropatt=0,
                  tgt_len=None, ext_len=None, mem_len=None, pre_lnorm=False, 
-                 k_rem_indexes=[], dilated_factors=[]):
+                 k_rem_indexes=[], dilated_factors=[], device=None):
         super(RSARelMultiHeadAttn, self).__init__()
 
         self.n_head = n_head
@@ -336,6 +336,7 @@ class RSARelMultiHeadAttn(nn.Module):
         self.pre_lnorm = pre_lnorm
 
         #!
+        self.device = device
         # Add RSA hyperparameters
         self.k_rem_indexes = k_rem_indexes
         self.dilated_factors = dilated_factors
@@ -352,7 +353,7 @@ class RSARelMultiHeadAttn(nn.Module):
 
         k1, k2, k3, k4, k5, k6 = self.k_rem_indexes
         d = self.dilated_factors.copy() if self.dilated_factors else []
-        self.rems = REM(k1=k1, k2=k2, k3=k3, k4=k4, k5=k5, k6=k6, d=d, truncation=5)
+        self.rems = REM(k1=k1, k2=k2, k3=k3, k4=k4, k5=k5, k6=k6, d=d, truncation=5, device=device)
 
 
     def _parallelogram_mask(self, h, w, left=False):
@@ -890,7 +891,8 @@ class MemTransformerLM(nn.Module):
                  tgt_len=None, ext_len=None, mem_len=None, 
                  cutoffs=[], adapt_inp=False,
                  same_length=False, attn_type=0, clamp_len=-1, 
-                 sample_softmax=-1, k_rem_indexes=[], dilated_factors=[]):
+                 sample_softmax=-1, 
+                 k_rem_indexes=[], dilated_factors=[], device=None):
         super(MemTransformerLM, self).__init__()
         self.n_token = n_token
 
@@ -950,7 +952,7 @@ class MemTransformerLM(nn.Module):
                         n_head, d_model, d_head, d_inner, dropout,
                         tgt_len=tgt_len, ext_len=ext_len, mem_len=mem_len,
                         dropatt=dropatt, pre_lnorm=pre_lnorm, 
-                        k_rem_indexes=k_rem_indexes, dilated_factors=dilated_factors)
+                        k_rem_indexes=k_rem_indexes, dilated_factors=dilated_factors, device=device)
                 )
 
         self.sample_softmax = sample_softmax
