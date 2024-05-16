@@ -40,10 +40,10 @@ class REM(nn.Module):
 
     #     k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
     #     M = L * theta
-    #     s2 = torch.cos(M[k1:(k1+k2), ])
-    #     s3 = torch.sin(M[k2:(k2+k3), ])
-    #     s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ])
-    #     s6 = torch.sin(M[(k2+k3+k4+k5):, ])
+    #     s2 = torch.cos(M[k1:(k1+k2), ]).to(dtype=torch.float32, device=self.device)
+    #     s3 = torch.sin(M[k2:(k2+k3), ]).to(dtype=torch.float32, device=self.device).to(dtype=torch.float32, device=self.device)
+    #     s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ]).to(dtype=torch.float32, device=self.device)
+    #     s6 = torch.sin(M[(k2+k3+k4+k5):, ]).to(dtype=torch.float32, device=self.device)
     #     return s2,s3,s5,s6
 
     # RORYS
@@ -98,17 +98,17 @@ class REM(nn.Module):
 
         # REM = torch.cat([L1, L2, L3, L4, L5, L6])
 
-        s = self.get_sinusoid(L, theta)
-        powered_lambda = pow(lambda_,L1)
-        powered_gamma = pow(gamma,L2)
-        REM = torch.cat([powered_lambda, (powered_gamma * s)])
-
-
-
-        # s1,s2,s3,s4 = get_sinusoid(L,theta)
         # s = self.get_sinusoid(L, theta)
-        # powered_gamma = pow(gamma,L)
-        # REM = powered_gamma * s   
+        # powered_lambda = pow(lambda_,L1)
+        # powered_gamma = pow(gamma,L2)
+        # REM = torch.cat([powered_lambda, (powered_gamma * s)])
+
+
+
+        # #s1,s2,s3,s4 = get_sinusoid(L,theta)
+        s = self.get_sinusoid(L, theta)
+        powered_gamma = pow(gamma,L)
+        REM = powered_gamma * s   
 
         return REM.permute(1, 2, 0)      # query_len x key_len x n_heads
 
