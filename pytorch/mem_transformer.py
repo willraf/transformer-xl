@@ -542,9 +542,9 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
                     attn_mask[:,:,:,None], -float('inf')).type_as(attn_score)
 
         #!
-        print('Attention score shape')
-        print(attn_score.shape)
-        rems = self.rems(eta=self.eta, nu=self.nu, theta=self.theta, query_len=qlen)
+        print('Attention score shape', attn_score.shape)
+        print(f'query len {qlen}, key len {klen}')
+        rems = self.rems(eta=self.eta, nu=self.nu, theta=self.theta, query_len=qlen, key_len=klen)
 
         # Repeat the rem for the number of batches. I think this is ok as the rem does not depend on the data in the batch
         rems = rems.unsqueeze(2)

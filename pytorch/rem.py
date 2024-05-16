@@ -33,7 +33,7 @@ class REM(nn.Module):
         s = torch.cat([s1,s2,s3,s4])
         return s
 
-    def forward(self, eta, nu, theta, query_len):
+    def forward(self, eta, nu, theta, query_len, key_len):
         lambda_ = torch.tanh(eta)
         gamma = torch.sigmoid(nu)
         L = self.create_Toeplitz_3D(self.d, self.truncation, query_len) # L is of shape (n_heads x query_len x key_len)
