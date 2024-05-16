@@ -239,8 +239,7 @@ class RSAMultiHeadAttn(nn.Module):
         else:
             ##### residual connection + layer normalization
             output = self.layer_norm(h + attn_out)
-        print('Output')
-        print(output)
+
         return output
 
 class RelMultiHeadAttn(nn.Module):
@@ -583,6 +582,8 @@ class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
             ##### residual connection + layer normalization
             output = self.layer_norm(w + attn_out)
 
+        print('Output')
+        print(output)
         return output
 
 class RelLearnableMultiHeadAttn(RelMultiHeadAttn):
