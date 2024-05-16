@@ -105,8 +105,10 @@ class REM(nn.Module):
         L3 = pow(gamma,L3) * s3
         L5 = pow(gamma,L5) * s5
         L6 = pow(gamma,L6) * s6
-
-        print(L5.shape)
+        print('L', L.shape)
+        print('L distilled': L_distiled.shape)
+        print('L5 ', L5.shape)
+        print('L6 ', L6.shape)
 
         REM = torch.cat([L1, L2, L3, L4, L5, L6])
         print(REM.shape)
