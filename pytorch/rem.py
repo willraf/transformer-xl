@@ -49,7 +49,7 @@ class REM(nn.Module):
         REM = torch.cat([powered_lambda, (powered_gamma * s)])
         print('REM shape: ', REM.shape)
         print('transpoase REM shape', REM.transpose(0, 2).shape)
-        return REM.transpose(0, 2)      # query_len x key_len x n_heads
+        return REM.permute(1, 2, 0)      # query_len x key_len x n_heads
 
     # def create_Toeplitz_3D(self, d, truncation, query_len):
     #     T = np.arange(query_len) 
