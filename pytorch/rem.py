@@ -58,6 +58,22 @@ class REM(nn.Module):
         s6 = torch.sin(M[(k2+k3+k4+k5):, ]).to(dtype=torch.float32, device=self.device)
         return s2,s3,s5,s6
 
+    def forward(self, eta, nu, theta, query_len, key_len):
+        lambda_ = torch.tanh(eta)
+        gamma = torch.sigmoid(nu)
+        L = self.create_Toeplitz_3D(self.d, self.truncation, query_len, key_len) # L is of shape (n_heads x query_len x key_len)
+        # L1 = L[:2, :, :]
+        # L2 = L[2:, :, :]
+        # # s1,s2,s3,s4 = get_sinusoid(L,theta)
+        # s = self.get_sinusoid(L2, theta)
+        # powered_lambda = pow(lambda_,L1)
+        # powered_gamma = pow(gamma,L2)
+        # REM = torch.cat([powered_lambda, (powered_gamma * s)])
+
+        # s1,s2,s3,s4 = get_sinusoid(L,theta)
+        s = self.get_sinusoid(L, theta)
+        powered_gamma = pow(gamma,L)
+        REM = powered_gamma * s   
 
     def forward(self, eta, nu, theta, query_len, key_len):
         lambda_ = torch.tanh(eta)
@@ -66,8 +82,8 @@ class REM(nn.Module):
         
         k1, k2, k3, k4, k5, k6 = self.k1, self.k2, self.k3, self.k4, self.k5, self.k6
 
-        L_distiled = torch.empty_like(L).to(dtype=torch.float32, device=self.device)
-        print('L_disl ', L_distiled.shape)
+        L_distiled = torch.empty_like(L, dtype=torch.float32, device=self.device)
+        print('L_disl ', L_distiled.dtype)
         undil_n = k1+k2+k3
         dil_n = k4+k5+k6
         L_distiled[:undil_n] = L[:undil_n]
@@ -93,10 +109,10 @@ class REM(nn.Module):
         P3 = pow(gamma,L3) * s3
         P5 = pow(gamma,L5) * s5
         P6 = pow(gamma,L6) * s6
-        print('L', L.shape)
-        print('L distilled', L_distiled.shape)
-        print('L5 ', P5.shape)
-        print('L6 ', P6.shape)
+        print('L', L.dtype)
+        print('L distilled', L_distiled.dtype)
+        print('L5 ', P5.dtype)
+        print('L6 ', P6.dtype)
 
         REM = torch.cat([P1, P2, P3, P4, P5, P6])
         print(REM.shape)
