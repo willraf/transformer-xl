@@ -1,4 +1,4 @@
-# Steps 
+# Setup 
 
 ## 1. Change data.sh to prevent error
 There was an issure with getdata.sh where datasets 'wikitext-2' and 'WikiText-103 (WT2)' fail to load. This causes subsequent datasets to be loaded to the wrong directory. 
@@ -41,13 +41,19 @@ Now running the demo scripts should work:
 
 In order to reprodce the results given by the paper, we need to make some changes.
 
-## Text8
+# Run
 
-`bash run_text8_rsa.sh train --work_dir ~/xl-exp1
+## Text8
+Baseline:
+`bash run_text8_base.sh train --work_dir ~/xl-exp1`
+`bash run_text8_base.sh eval --work_dir ~/xl-exp1`
+RSA Version:
+`bash run_text8_rsa.sh train --work_dir ~/xl-exp1`
+`bash run_text8_rsa.sh eval --work_dir ~/xl-exp1`
 
 ## Wiki8
 
-1. change line 9 of "run_enwik8_base.sh"
-   `--n_layer 14 \`
+Same as above, but with run_enwik8_base.sh and run_enwik8_rsa.sh
 
-The paper states that "We follow the training schemes of Transformer-XL"
+# Code
+The majority of code modified was within rem.py, mem_transformer.py and train.py. Added sections are often preceded with a '#!' comment. 
