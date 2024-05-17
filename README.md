@@ -45,10 +45,15 @@ In order to reprodce the results given by the paper, we need to make some change
 
 ## Text8
 Baseline:
+
 `bash run_text8_base.sh train --work_dir ~/xl-exp1`
+
 `bash run_text8_base.sh eval --work_dir ~/xl-exp1`
+
+
 RSA Version:
 `bash run_text8_rsa.sh train --work_dir ~/xl-exp1`
+
 `bash run_text8_rsa.sh eval --work_dir ~/xl-exp1`
 
 ## Wiki8
