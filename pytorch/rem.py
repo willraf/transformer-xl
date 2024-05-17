@@ -56,25 +56,7 @@ class REM(nn.Module):
         s3 = torch.sin(M[k2:(k2+k3), ]).to(dtype=torch.float32, device=self.device).to(dtype=torch.float32, device=self.device)
         s5 = torch.cos(M[(k2+k3+k4):(k2+k3+k4+k5), ]).to(dtype=torch.float32, device=self.device)
         s6 = torch.sin(M[(k2+k3+k4+k5):, ]).to(dtype=torch.float32, device=self.device)
-        # s = torch.cat([s2,s3,s5,s6])
         return s2,s3,s5,s6
-
-    # def forward(self, eta, nu, theta, query_len, key_len):
-    #     lambda_ = torch.tanh(eta)
-    #     gamma = torch.sigmoid(nu)
-    #     L = self.create_Toeplitz_3D(self.d, self.truncation, query_len, key_len) # L is of shape (n_heads x query_len x key_len)
-    #     # L1 = L[:2, :, :]
-    #     # L2 = L[2:, :, :]
-    #     # # s1,s2,s3,s4 = get_sinusoid(L,theta)
-    #     # s = self.get_sinusoid(L2, theta)
-    #     # powered_lambda = pow(lambda_,L1)
-    #     # powered_gamma = pow(gamma,L2)
-    #     # REM = torch.cat([powered_lambda, (powered_gamma * s)])
-
-    #     # s1,s2,s3,s4 = get_sinusoid(L,theta)
-    #     s = self.get_sinusoid(L, theta)
-    #     powered_gamma = pow(gamma,L)
-    #     REM = powered_gamma * s   
 
     def forward(self, eta, nu, theta, query_len, key_len):
         lambda_ = torch.tanh(eta)

@@ -142,6 +142,7 @@ class MultiHeadAttn(nn.Module):
 
         return output
 
+#!
 class RSAMultiHeadAttn(nn.Module):
     def __init__(self, n_head, d_model, d_head, dropout, dropatt=0, pre_lnorm=False,
                 k_rem_indexes=[], dilated_factors=[], n_rsa_head=4):
@@ -312,6 +313,7 @@ class RelMultiHeadAttn(nn.Module):
     def forward(self, w, r, attn_mask=None, mems=None):
         raise NotImplementedError
 
+#!
 class RSARelMultiHeadAttn(nn.Module):
     def __init__(self, n_head, d_model, d_head, dropout, dropatt=0,
                  tgt_len=None, ext_len=None, mem_len=None, pre_lnorm=False, 
@@ -486,6 +488,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
 
         return output
 
+#!
 class RSARelPartialLearnableMultiHeadAttn(RSARelMultiHeadAttn):
     def __init__(self, *args, **kwargs):
         super(RSARelPartialLearnableMultiHeadAttn, self).__init__(*args, **kwargs)
@@ -669,6 +672,7 @@ class RelLearnableMultiHeadAttn(RelMultiHeadAttn):
 
         return output
 
+#!
 class RSARelLearnableMultiHeadAttn(RSARelMultiHeadAttn):
     def __init__(self, *args, **kwargs):
         super(RSARelLearnableMultiHeadAttn, self).__init__(*args, **kwargs)
@@ -812,6 +816,7 @@ class RelPartialLearnableDecoderLayer(nn.Module):
 
         return output
 
+#1
 class RSARelPartialLearnableDecoderLayer(nn.Module):
     def __init__(self, n_head, d_model, d_head, d_inner, dropout,
                  **kwargs):
